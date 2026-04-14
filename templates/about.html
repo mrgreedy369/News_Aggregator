@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}About - NewsHub{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Hero -->
+    <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 rounded-3xl p-10 text-white text-center mb-10 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-4 left-4 text-8xl">📰</div>
+            <div class="absolute bottom-4 right-4 text-8xl">🌐</div>
+        </div>
+        <div class="relative z-10">
+            <div class="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-newspaper text-white text-4xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">About NewsHub</h1>
+            <p class="text-blue-200 text-xl max-w-2xl mx-auto leading-relaxed">
+                A modern news aggregator platform built to keep you informed about what matters most.
+            </p>
+        </div>
+    </div>
+
+    <!-- Purpose Section -->
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-6">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
+            <span class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-bullseye text-blue-600"></i>
+            </span>
+            Our Purpose
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="prose text-gray-600 leading-relaxed">
+                <p class="mb-4">
+                    <strong class="text-gray-900">NewsHub</strong> is a comprehensive news aggregation platform designed 
+                    to bring you the latest news from across the globe and India, all in one convenient place.
+                </p>
+                <p class="mb-4">
+                    In today's fast-paced world, staying informed can be challenging. NewsHub simplifies this by 
+                    aggregating news from multiple trusted sources, categorized for easy browsing — whether you're 
+                    interested in international affairs, national events, or regional stories from specific Indian states.
+                </p>
+                <p>
+                    Our mission is to make news consumption effortless, personalized, and enjoyable. We believe that 
+                    an informed society is a better society.
+                </p>
+            </div>
+            <div class="space-y-4">
+                {% for goal in [
+                    ('fas fa-globe', 'text-blue-600', 'bg-blue-100', 'Global Coverage', 'Access news from 190+ countries and thousands of sources.'),
+                    ('fas fa-filter', 'text-green-600', 'bg-green-100', 'Smart Categorization', 'News organized by international, national, and state-level sections.'),
+                    ('fas fa-user', 'text-purple-600', 'bg-purple-100', 'Personalization', 'Save favourite articles and build your personal news feed.'),
+                    ('fas fa-mobile-alt', 'text-orange-600', 'bg-orange-100', 'Responsive Design', 'Seamlessly works on desktop, tablet, and mobile devices.')
+                ] %}
+                <div class="flex items-start space-x-4 p-4 {{ goal[2] }}/40 rounded-2xl">
+                    <div class="w-10 h-10 {{ goal[2] }} rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="{{ goal[0] }} {{ goal[1] }}"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">{{ goal[3] }}</h4>
+                        <p class="text-gray-500 text-sm">{{ goal[4] }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Technologies Section -->
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-6">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center">
+            <span class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-code text-indigo-600"></i>
+            </span>
+            Technologies Used
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {% set techs = [
+                ('🐍', 'Python', 'from-green-400 to-emerald-500', 'Core backend language', 'Python powers our server-side logic with its clean syntax and rich ecosystem of libraries for web development and data processing.'),
+                ('⚗️', 'Flask', 'from-gray-600 to-gray-800', 'Web Framework', 'Flask provides the lightweight, flexible web framework that handles routing, authentication, and serves our web application.'),
+                ('🍃', 'MongoDB', 'from-green-500 to-green-700', 'Database', 'MongoDB stores user data, profiles, and saved news articles with its flexible document-based schema, perfect for varying article structures.'),
+                ('🎨', 'Tailwind CSS', 'from-cyan-500 to-blue-500', 'UI Framework', 'Tailwind CSS enables rapid, responsive UI development with utility-first classes for beautiful, consistent design.'),
+                ('⚡', 'JavaScript', 'from-yellow-400 to-yellow-500', 'Frontend Logic', 'Vanilla JavaScript handles dynamic content loading, API calls, and interactive features for a smooth user experience.'),
+                ('📰', 'NewsAPI', 'from-red-500 to-pink-500', 'News Source', 'NewsAPI.org provides access to breaking news and historical articles from thousands of global and Indian news sources in real-time.')
+            ] %}
+
+            {% for tech in techs %}
+            <div class="bg-gradient-to-br {{ tech[2] }} rounded-2xl p-6 text-white">
+                <div class="text-4xl mb-3">{{ tech[0] }}</div>
+                <h3 class="font-bold text-xl mb-1">{{ tech[1] }}</h3>
+                <p class="text-white/80 text-xs mb-3 font-medium uppercase tracking-wide">{{ tech[3] }}</p>
+                <p class="text-white/80 text-sm leading-relaxed">{{ tech[4] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-6">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center">
+            <span class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-star text-yellow-500"></i>
+            </span>
+            Platform Features
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% set features = [
+                ('fas fa-user-circle', 'bg-blue-100', 'text-blue-600', 'User Authentication', 'Secure registration, login, and logout with encrypted password storage using bcrypt.'),
+                ('fas fa-id-card', 'bg-purple-100', 'text-purple-600', 'User Profiles', 'Customizable profiles with photo upload, bio, and location details.'),
+                ('fas fa-globe', 'bg-green-100', 'text-green-600', 'International News', 'Real-time global news from hundreds of international sources via NewsAPI.'),
+                ('fas fa-flag', 'bg-orange-100', 'text-orange-600', 'National News', 'India-focused news covering politics, economy, culture, and more.'),
+                ('fas fa-map-marker-alt', 'bg-red-100', 'text-red-600', 'State-wise News', 'Dedicated news sections for 15 major Indian states with regional coverage.'),
+                ('fas fa-bookmark', 'bg-indigo-100', 'text-indigo-600', 'Save Favourites', 'Bookmark articles with one click, stored persistently in your account.'),
+                ('fas fa-search', 'bg-teal-100', 'text-teal-600', 'News Search', 'Powerful search functionality to find news on any topic instantly.'),
+                ('fas fa-mobile-alt', 'bg-pink-100', 'text-pink-600', 'Responsive Design', 'Fully responsive layout that works perfectly on all screen sizes.')
+            ] %}
+            {% for feature in features %}
+            <div class="flex items-start space-x-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors">
+                <div class="w-10 h-10 {{ feature[1] }} rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i class="{{ feature[0] }} {{ feature[2] }}"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-1">{{ feature[3] }}</h4>
+                    <p class="text-gray-500 text-sm">{{ feature[4] }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Developer Info -->
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 text-white">
+        <h2 class="text-3xl font-bold mb-8 flex items-center">
+            <i class="fas fa-code mr-4 text-blue-400"></i>Developer Information
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-4">
+                    <i class="fas fa-user-tie text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Full-Stack Developer</h3>
+                <p class="text-gray-400 mb-4 leading-relaxed">
+                    NewsHub was built as a full-stack web application demonstrating the integration of Python backend 
+                    with a modern, responsive frontend using Flask, MongoDB, and Tailwind CSS.
+                </p>
+                <div class="space-y-2">
+                    {% for item in [
+                        ('fas fa-cog', 'Backend', 'Python, Flask, PyMongo'),
+                        ('fas fa-database', 'Database', 'MongoDB with PyMongo'),
+                        ('fas fa-palette', 'Frontend', 'HTML5, Tailwind CSS, JavaScript'),
+                        ('fas fa-newspaper', 'Data Source', 'NewsAPI.org')
+                    ] %}
+                    <div class="flex items-center space-x-3">
+                        <i class="{{ item[0] }} text-blue-400 w-5"></i>
+                        <span class="text-gray-400 text-sm">{{ item[1] }}:</span>
+                        <span class="text-white text-sm font-medium">{{ item[2] }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4">Project Architecture</h3>
+                <div class="bg-gray-800 rounded-2xl p-5 font-mono text-sm text-gray-300">
+                    <pre class="leading-relaxed">news_aggregator/
+├── app.py          <span class="text-green-400"># Main app</span>
+├── config.py       <span class="text-green-400"># Settings</span>
+├── routes/         <span class="text-blue-400"># Blueprints</span>
+│   ├── auth.py
+│   ├── news.py
+│   ├── profile.py
+│   └── favourites.py
+├── models/         <span class="text-purple-400"># Data models</span>
+│   ├── user.py
+│   └── favourite.py
+├── templates/      <span class="text-yellow-400"># HTML pages</span>
+└── static/         <span class="text-orange-400"># CSS/JS</span></pre>
+                </div>
+                <div class="mt-6">
+                    <h4 class="font-bold text-gray-300 mb-3">Version Info</h4>
+                    <div class="flex flex-wrap gap-2">
+                        {% for badge in [
+                            ('Python 3.11+', 'bg-green-800 text-green-300'),
+                            ('Flask 3.0', 'bg-gray-700 text-gray-300'),
+                            ('MongoDB 7.0', 'bg-green-800 text-green-300'),
+                            ('Tailwind CSS 3', 'bg-blue-900 text-blue-300'),
+                            ('NewsAPI v2', 'bg-red-900 text-red-300')
+                        ] %}
+                        <span class="px-3 py-1 {{ badge[1] }} rounded-full text-xs font-medium">{{ badge[0] }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

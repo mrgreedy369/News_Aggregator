@@ -1,0 +1,465 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - NewsHub{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Welcome Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 mb-8 text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-4 right-4 text-9xl">📰</div>
+        </div>
+        <div class="relative z-10">
+            <h1 class="text-3xl font-bold mb-2">
+                Good {% if now.hour < 12 %}Morning{% elif now.hour < 17 %}Afternoon{% else %}Evening{% endif %}, 
+                {{ current_user.full_name or current_user.username }}! 👋
+            </h1>
+            <p class="text-blue-200 text-lg">Here's what's happening in the world today</p>
+            <div class="flex items-center mt-4 space-x-4 text-sm text-blue-200">
+                <span><i class="fas fa-calendar mr-1"></i> <span id="currentDate"></span></span>
+                <span><i class="fas fa-clock mr-1"></i> <span id="currentTime"></span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Search -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-8">
+        <div class="flex items-center space-x-3">
+            <div class="flex-1 relative">
+                <input type="text" id="mainSearch" placeholder="Search for news topics, events, people..."
+                       class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-base"
+                       onkeypress="handleMainSearch(event)">
+                <i class="fas fa-search absolute left-4 top-3.5 text-gray-400 text-lg"></i>
+            </div>
+            <button onclick="triggerSearch()" 
+                    class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-sm">
+                <i class="fas fa-search mr-1"></i> Search
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Results Section (hidden by default) -->
+    <div id="searchSection" class="hidden mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-gray-900">
+                <i class="fas fa-search mr-2 text-blue-500"></i>
+                Search Results: "<span id="searchQueryDisplay"></span>"
+            </h2>
+            <button onclick="closeSearch()" class="text-gray-400 hover:text-gray-600 flex items-center text-sm">
+                <i class="fas fa-times mr-1"></i> Close
+            </button>
+        </div>
+        <div id="searchResults" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Search results loaded here -->
+        </div>
+    </div>
+
+    <!-- News Categories Tabs -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+        <div class="flex overflow-x-auto scrollbar-hide">
+            <button onclick="showSection('international')" id="tab-international"
+                    class="tab-btn active flex items-center px-6 py-4 font-semibold whitespace-nowrap border-b-2 border-blue-600 text-blue-600 bg-blue-50 transition-all">
+                <i class="fas fa-globe mr-2"></i>International
+            </button>
+            <button onclick="showSection('national')" id="tab-national"
+                    class="tab-btn flex items-center px-6 py-4 font-semibold whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all">
+                <i class="fas fa-flag mr-2"></i>National
+            </button>
+            <button onclick="showSection('state')" id="tab-state"
+                    class="tab-btn flex items-center px-6 py-4 font-semibold whitespace-nowrap border-b-2 border-transparent text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all">
+                <i class="fas fa-map-marker-alt mr-2"></i>State News
+            </button>
+        </div>
+    </div>
+
+    <!-- International News Section -->
+    <div id="section-international" class="news-section">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                    <span class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-globe text-blue-600 text-sm"></i>
+                    </span>
+                    International News
+                </h2>
+                <p class="text-gray-500 text-sm mt-1 ml-11">Latest news from around the world</p>
+            </div>
+            <button onclick="loadInternationalNews()" 
+                    class="flex items-center px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors text-sm font-medium">
+                <i class="fas fa-sync mr-2"></i>Refresh
+            </button>
+        </div>
+        <div id="internationalNews" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div class="col-span-full flex justify-center py-16">
+                <div class="text-center">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-gray-500">Loading international news...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- National News Section -->
+    <div id="section-national" class="news-section hidden">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                    <span class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-flag text-orange-600 text-sm"></i>
+                    </span>
+                    National News
+                </h2>
+                <p class="text-gray-500 text-sm mt-1 ml-11">Top stories from across India</p>
+            </div>
+            <button onclick="loadNationalNews()" 
+                    class="flex items-center px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors text-sm font-medium">
+                <i class="fas fa-sync mr-2"></i>Refresh
+            </button>
+        </div>
+        <div id="nationalNews" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div class="col-span-full flex justify-center py-16">
+                <div class="text-center">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-gray-500">Loading national news...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- State News Section -->
+    <div id="section-state" class="news-section hidden">
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 flex items-center mb-4">
+                <span class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-map-marker-alt text-purple-600 text-sm"></i>
+                </span>
+                State-wise News
+            </h2>
+            <!-- State Selector -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Select a State:</label>
+                <div class="flex flex-wrap gap-2">
+                    {% for state in states %}
+                    <button onclick="loadStateNews('{{ state }}')" 
+                            id="state-btn-{{ state.replace(' ', '-') }}"
+                            class="state-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-blue-600 hover:text-white transition-all duration-200">
+                        {{ state }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div id="stateNewsContainer" class="hidden">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-800">
+                    <i class="fas fa-location-dot mr-2 text-purple-500"></i>
+                    <span id="selectedStateName"></span> News
+                </h3>
+            </div>
+            <div id="stateNews" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        </div>
+
+        <!-- Placeholder -->
+        <div id="statePlaceholder" class="text-center py-20">
+            <div class="text-8xl mb-4">🗺️</div>
+            <p class="text-gray-500 text-lg font-medium">Select a state to view regional news</p>
+            <p class="text-gray-400 text-sm mt-2">Click any state button above to get started</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- News Card Template (hidden) -->
+<template id="newsCardTemplate">
+    <div class="news-card bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-1 flex flex-col">
+        <div class="relative">
+            <img src="" alt="" class="card-image w-full h-48 object-cover bg-gray-100"
+                 onerror="this.src='https://picsum.photos/seed/default/800/400'">
+            <div class="absolute top-3 right-3">
+                <button class="fav-btn w-9 h-9 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-md hover:bg-white transition-all duration-200">
+                    <i class="fas fa-bookmark text-gray-400 text-sm"></i>
+                </button>
+            </div>
+            <div class="absolute bottom-3 left-3">
+                <span class="card-source px-2.5 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full shadow-sm"></span>
+            </div>
+        </div>
+        <div class="p-5 flex flex-col flex-1">
+            <a href="#" class="card-link block" target="_blank" rel="noopener noreferrer">
+                <h3 class="card-title text-base font-bold text-gray-900 leading-snug mb-3 hover:text-blue-600 transition-colors line-clamp-2 cursor-pointer"></h3>
+            </a>
+            <p class="card-description text-gray-500 text-sm leading-relaxed line-clamp-3 flex-1"></p>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-50">
+                <a href="#" class="card-read-more text-blue-600 text-sm font-semibold hover:text-blue-700 transition-colors" 
+                   target="_blank" rel="noopener noreferrer">
+                    Read More <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                </a>
+                <span class="card-time text-xs text-gray-400"></span>
+            </div>
+        </div>
+    </div>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Set current date/time
+function updateDateTime() {
+    const now = new Date();
+    const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const dateEl = document.getElementById('currentDate');
+    const timeEl = document.getElementById('currentTime');
+    if (dateEl) dateEl.textContent = now.toLocaleDateString('en-IN', dateOptions);
+    if (timeEl) timeEl.textContent = now.toLocaleTimeString('en-IN', timeOptions);
+}
+updateDateTime();
+setInterval(updateDateTime, 1000);
+
+// Tab Management
+let activeSection = 'international';
+let loadedSections = new Set();
+
+function showSection(section) {
+    // Hide all sections
+    document.querySelectorAll('.news-section').forEach(s => s.classList.add('hidden'));
+    // Deactivate all tabs
+    document.querySelectorAll('.tab-btn').forEach(t => {
+        t.classList.remove('active', 'border-blue-600', 'text-blue-600', 'bg-blue-50');
+        t.classList.add('border-transparent', 'text-gray-500');
+    });
+
+    // Show selected section
+    document.getElementById(`section-${section}`).classList.remove('hidden');
+    const activeTab = document.getElementById(`tab-${section}`);
+    activeTab.classList.add('active', 'border-blue-600', 'text-blue-600', 'bg-blue-50');
+    activeTab.classList.remove('border-transparent', 'text-gray-500');
+
+    activeSection = section;
+
+    // Load news if not loaded yet
+    if (!loadedSections.has(section)) {
+        if (section === 'international') loadInternationalNews();
+        else if (section === 'national') loadNationalNews();
+        loadedSections.add(section);
+    }
+}
+
+// Format date helper
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diff = Math.floor((now - date) / 1000);
+        if (diff < 60) return 'Just now';
+        if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+        return `${Math.floor(diff / 86400)}d ago`;
+    } catch { return ''; }
+}
+
+// Create news card from template
+function createNewsCard(article) {
+    const template = document.getElementById('newsCardTemplate');
+    const clone = template.content.cloneNode(true);
+
+    const img = clone.querySelector('.card-image');
+    const title = clone.querySelector('.card-title');
+    const description = clone.querySelector('.card-description');
+    const source = clone.querySelector('.card-source');
+    const links = clone.querySelectorAll('.card-link, .card-read-more');
+    const favBtn = clone.querySelector('.fav-btn');
+    const time = clone.querySelector('.card-time');
+
+    img.src = article.image_url || `https://picsum.photos/seed/${Math.random()}/800/400`;
+    img.alt = article.title;
+    title.textContent = article.title;
+    description.textContent = article.description || 'No description available.';
+    source.textContent = article.source || 'Unknown';
+    time.textContent = formatDate(article.published_at);
+
+    links.forEach(link => {
+        if (link) link.href = article.url;
+    });
+
+    // Favourite button state
+    const favIcon = favBtn.querySelector('i');
+    if (article.is_favourite) {
+        favIcon.classList.remove('text-gray-400');
+        favIcon.classList.add('text-blue-600');
+    }
+
+    favBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFavourite(article, favBtn);
+    });
+
+    return clone;
+}
+
+// Load International News
+async function loadInternationalNews() {
+    const container = document.getElementById('internationalNews');
+    showLoader(container);
+    try {
+        const response = await fetch('/api/news/international');
+        const data = await response.json();
+        renderNews(container, data.articles);
+    } catch (error) {
+        showError(container, 'Failed to load international news.');
+    }
+}
+
+// Load National News
+async function loadNationalNews() {
+    const container = document.getElementById('nationalNews');
+    showLoader(container);
+    try {
+        const response = await fetch('/api/news/national');
+        const data = await response.json();
+        renderNews(container, data.articles);
+    } catch (error) {
+        showError(container, 'Failed to load national news.');
+    }
+}
+
+// Load State News
+async function loadStateNews(stateName) {
+    // Update state buttons
+    document.querySelectorAll('.state-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-gray-100', 'text-gray-700');
+    });
+    const activeBtn = document.getElementById(`state-btn-${stateName.replace(/ /g, '-')}`);
+    if (activeBtn) {
+        activeBtn.classList.add('bg-blue-600', 'text-white');
+        activeBtn.classList.remove('bg-gray-100', 'text-gray-700');
+    }
+
+    document.getElementById('selectedStateName').textContent = stateName;
+    document.getElementById('stateNewsContainer').classList.remove('hidden');
+    document.getElementById('statePlaceholder').classList.add('hidden');
+
+    const container = document.getElementById('stateNews');
+    showLoader(container);
+
+    try {
+        const response = await fetch(`/api/news/state/${encodeURIComponent(stateName)}`);
+        const data = await response.json();
+        renderNews(container, data.articles);
+    } catch (error) {
+        showError(container, `Failed to load ${stateName} news.`);
+    }
+}
+
+// Search News
+async function searchNews(query) {
+    if (!query.trim()) return;
+
+    document.getElementById('searchQueryDisplay').textContent = query;
+    document.getElementById('searchSection').classList.remove('hidden');
+
+    const container = document.getElementById('searchResults');
+    showLoader(container);
+
+    try {
+        const response = await fetch(`/api/news/search?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        renderNews(container, data.articles);
+        document.getElementById('searchSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (error) {
+        showError(container, 'Failed to perform search.');
+    }
+}
+
+function handleMainSearch(event) {
+    if (event.key === 'Enter') triggerSearch();
+}
+
+function triggerSearch() {
+    const query = document.getElementById('mainSearch').value;
+    if (query.trim()) searchNews(query);
+}
+
+function closeSearch() {
+    document.getElementById('searchSection').classList.add('hidden');
+    document.getElementById('mainSearch').value = '';
+}
+
+// Render news cards
+function renderNews(container, articles) {
+    container.innerHTML = '';
+    if (!articles || articles.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-full text-center py-16">
+                <div class="text-6xl mb-4">🔍</div>
+                <p class="text-gray-500 text-lg font-medium">No news found</p>
+                <p class="text-gray-400 text-sm mt-2">Try refreshing or check your internet connection</p>
+            </div>`;
+        return;
+    }
+    articles.forEach(article => {
+        container.appendChild(createNewsCard(article));
+    });
+}
+
+// Toggle favourite
+async function toggleFavourite(article, btn) {
+    const favIcon = btn.querySelector('i');
+    const isFav = favIcon.classList.contains('text-blue-600');
+
+    try {
+        const endpoint = isFav ? '/favourites/remove' : '/favourites/add';
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(isFav ? { url: article.url } : article)
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            if (isFav) {
+                favIcon.classList.remove('text-blue-600');
+                favIcon.classList.add('text-gray-400');
+                showToast('Removed from favourites', 'info');
+            } else {
+                favIcon.classList.add('text-blue-600');
+                favIcon.classList.remove('text-gray-400');
+                showToast('Saved to favourites! 🔖', 'success');
+            }
+        } else {
+            showToast(data.message || 'Error', 'error');
+        }
+    } catch (error) {
+        showToast('Failed to update favourites', 'error');
+    }
+}
+
+// Loader helper
+function showLoader(container) {
+    container.innerHTML = `
+        <div class="col-span-full flex justify-center py-16">
+            <div class="text-center">
+                <div class="loading-spinner mx-auto mb-4"></div>
+                <p class="text-gray-500">Loading news...</p>
+            </div>
+        </div>`;
+}
+
+// Error helper
+function showError(container, message) {
+    container.innerHTML = `
+        <div class="col-span-full text-center py-16">
+            <div class="text-5xl mb-4">⚠️</div>
+            <p class="text-red-500 font-medium">${message}</p>
+        </div>`;
+}
+
+// Initialize: load international news on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadInternationalNews();
+    loadedSections.add('international');
+});
+</script>
+{% endblock %}

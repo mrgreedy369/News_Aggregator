@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}NewsHub - Welcome{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 relative overflow-hidden">
+    <!-- Animated Background Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse" style="animation-delay: 4s;"></div>
+    </div>
+
+    <!-- Navbar for landing -->
+    <nav class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="bg-white/20 backdrop-blur rounded-xl p-2">
+                <i class="fas fa-newspaper text-white text-xl"></i>
+            </div>
+            <span class="text-2xl font-bold text-white">NewsHub</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{{ url_for('auth.login') }}" 
+               class="px-5 py-2 text-white border border-white/30 rounded-full hover:bg-white/10 transition-all duration-200 text-sm font-medium">
+                Login
+            </a>
+            <a href="{{ url_for('auth.register') }}" 
+               class="px-5 py-2 bg-white text-blue-700 rounded-full hover:bg-blue-50 transition-all duration-200 text-sm font-bold shadow-lg">
+                Get Started
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32 text-center">
+        <div class="inline-flex items-center px-4 py-2 bg-blue-500/30 border border-blue-400/30 rounded-full text-blue-200 text-sm mb-8 backdrop-blur">
+            <i class="fas fa-bolt mr-2"></i>
+            Real-time news from around the world
+        </div>
+        <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
+            Stay Informed,<br>
+            <span class="bg-gradient-to-r from-blue-300 to-indigo-300 bg-clip-text text-transparent">
+                Stay Ahead
+            </span>
+        </h1>
+        <p class="text-xl text-blue-200 mb-12 max-w-2xl mx-auto leading-relaxed">
+            Get the latest international, national, and state-wise news all in one place. 
+            Save your favourite articles and never miss what matters.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="{{ url_for('auth.register') }}" 
+               class="px-8 py-4 bg-white text-blue-700 rounded-2xl font-bold text-lg hover:bg-blue-50 transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+                <i class="fas fa-rocket mr-2"></i>Start Reading Free
+            </a>
+            <a href="{{ url_for('news.about') }}" 
+               class="px-8 py-4 bg-blue-700/50 backdrop-blur text-white rounded-2xl font-bold text-lg hover:bg-blue-700/70 transition-all duration-200 border border-blue-500/30">
+                <i class="fas fa-play mr-2"></i>Learn More
+            </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8">
+            {% for stat in [
+                ('🌍', '190+', 'Countries Covered'),
+                ('📰', '1000+', 'News Sources'),
+                ('⚡', 'Real-time', 'Updates'),
+                ('🔖', 'Unlimited', 'Saved Articles')
+            ] %}
+            <div class="text-center">
+                <div class="text-3xl mb-2">{{ stat[0] }}</div>
+                <div class="text-2xl font-bold text-white">{{ stat[1] }}</div>
+                <div class="text-blue-300 text-sm">{{ stat[2] }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="bg-white py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Everything You Need</h2>
+            <p class="text-xl text-gray-500">Powerful features to keep you informed</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for feature in [
+                ('fas fa-globe', 'bg-blue-100', 'text-blue-600', 'International News', 'Get breaking news from across the globe, curated from top international sources.'),
+                ('fas fa-flag', 'bg-green-100', 'text-green-600', 'National Coverage', 'Stay updated with the latest happenings across India from trusted national sources.'),
+                ('fas fa-map-marker-alt', 'bg-purple-100', 'text-purple-600', 'State-wise News', 'Dive into regional news from any Indian state with dedicated sections.'),
+                ('fas fa-bookmark', 'bg-yellow-100', 'text-yellow-600', 'Save Favourites', 'Bookmark articles to read later. Your saved news syncs across all devices.'),
+                ('fas fa-search', 'bg-red-100', 'text-red-600', 'Smart Search', 'Search through thousands of articles to find exactly what you\'re looking for.'),
+                ('fas fa-user-circle', 'bg-indigo-100', 'text-indigo-600', 'Personal Profile', 'Customize your profile with photo and bio for a personalized experience.')
+            ] %}
+            <div class="bg-gray-50 rounded-2xl p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <div class="w-14 h-14 {{ feature[1] }} rounded-2xl flex items-center justify-center mb-6">
+                    <i class="{{ feature[0] }} {{ feature[2] }} text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">{{ feature[3] }}</h3>
+                <p class="text-gray-500 leading-relaxed">{{ feature[4] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="bg-gradient-to-r from-blue-600 to-indigo-700 py-20">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold text-white mb-6">Ready to Get Started?</h2>
+        <p class="text-xl text-blue-200 mb-10">Join thousands of readers who trust NewsHub for their daily news.</p>
+        <a href="{{ url_for('auth.register') }}" 
+           class="inline-flex items-center px-10 py-4 bg-white text-blue-700 rounded-2xl font-bold text-lg hover:bg-blue-50 transition-all duration-200 shadow-xl">
+            <i class="fas fa-user-plus mr-3"></i>
+            Create Free Account
+        </a>
+    </div>
+</div>
+{% endblock %}
